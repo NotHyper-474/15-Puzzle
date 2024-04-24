@@ -22,13 +22,7 @@ int main()
 	std::cout << "Hello World!" << endl;
 
 	PuzzleGame* puzzleGame = new PuzzleGame("Resources/puzzleimage.png");
-	game = (Game*)puzzleGame;//TestGame();
-	/*game->Create(
-		"Zombies Ate My Neighbors",
-		DEFAULT_SCREEN_WIDTH,
-		DEFAULT_SCREEN_HEIGHT,
-		DEFAULT_PIXELSCALE
-	);*/
+	game = (Game*)puzzleGame;
 	game->Create("Picture Game", 300, 300, 1, false, false);
 	
 	InputManager::Initialize(*game);

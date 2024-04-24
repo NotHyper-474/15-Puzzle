@@ -5,6 +5,8 @@
 
 # Not include the files inside paths in Language analytics
 lib/** linguist-vendored
+custom_ports/** linguist-vendored
+custom_triplets/** linguist-vendored
 
 ###############################################################################
 # Set default behavior for command prompt diff.
