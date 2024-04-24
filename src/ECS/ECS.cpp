@@ -1,0 +1,95 @@
+#include "ECS.h"
+
+#pragma region Entity
+
+Entity::Entity(const char* name, const Vector2f& localPosition) : name(name)
+{
+	m_transform = &AddComponent<Transform>(localPosition);
+}
+
+void Entity::Start()
+{
+	for (auto& c : components)
+	{
+		c->m_owner = this;
+		c->m_transform = m_transform;
+		c->Start();
+	}
+	for (size_t i = 0; i < m_transform->children.size(); i++) m_transform->children[i]->owner->Start();
+}
+
+void Entity::Update(const float _deltaTime)
+{
+	for (auto& c : components) c->Update(_deltaTime);
+	for (size_t i = 0; i < m_transform->children.size(); i++) m_transform->children[i]->owner->Update(_deltaTime);
+}
+
+void Entity::FixedUpdate(const float _fixedDeltaTime)
+{
+	for (auto& c : components) c->FixedUpdate(_fixedDeltaTime);
+	for (size_t i = 0; i < m_transform->children.size(); i++) m_transform->children[i]->owner->FixedUpdate(_fixedDeltaTime);
+}
+
+void Entity::Draw()
+{
+	for (auto& c : components) c->Draw();
+	for (size_t i = 0; i < m_transform->children.size(); i++) m_transform->children[i]->owner->Draw();
+}
+
+#pragma endregion
+
+#pragma region ECSManager
+void Manager::PreUpdate()
+{
+	for (size_t i = 0; i < pendingEntities.size(); i++)
+	{
+		Entity* handle = pendingEntities.front();
+		pendingEntities.pop();
+		if (handle != nullptr && (!handle->IsSelfActive() || handle->m_transform->parent != NULL))
+		{
+			continue;
+		}
+		handle->Start();
+	}
+}
+
+void Manager::Update(const float _deltaTime)
+{
+	for (auto& e : entities)
+		if (e->m_transform->parent == nullptr && e->IsSelfActive()) e->Update(_deltaTime);
+}
+
+void Manager::FixedUpdate(const float _fixedDeltaTime)
+{
+	for (auto& e : entities)
+		if (e->m_transform->parent == nullptr && e->IsSelfActive()) e->FixedUpdate(_fixedDeltaTime);
+}
+
+void Manager::Draw()
+{
+	for (auto& e : entities)
+		if (e->m_transform->parent == nullptr && e->IsSelfActive())
+			e->Draw();
+}
+
+/// <summary>
+/// Removes inactive entities
+/// </summary>
+void Manager::Refresh()
+{
+	entities.erase(std::remove_if(std::begin(entities), std::end(entities),
+		[](const std::unique_ptr<Entity>& mEntity)
+		{
+			return mEntity->destroyed;
+		}), std::end(entities));
+}
+
+void Manager::RemoveChild(Transform* child)
+{
+	entities.erase(std::remove_if(std::begin(entities), std::end(entities),
+		[child](const std::unique_ptr<Entity>& e)
+		{
+			return e->m_transform == child;
+		}));
+}
+#pragma endregion
