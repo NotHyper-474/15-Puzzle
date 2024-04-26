@@ -3,12 +3,8 @@
 #include "solver.hpp"
 
 int ida::search(std::deque<PuzzleState>& path, int g, int bound, std::vector<Vector2i>& dirs, float startingTime) {
-	if (Time::GetTime() - startingTime > 10.f) {
-		static bool logged = false;
-		if (!logged) {
-			Logger::LogError("Time limit exceeded, algorithm might have been fed an unsolvable puzzle");
-			logged = true;
-		}
+	if (Time::GetTime() - startingTime > 20.f) {
+		Logger::LogError("Time limit exceeded, algorithm might have been fed an unsolvable puzzle");
 		return INF;
 	}
 	PuzzleState cur = path.back();
@@ -25,12 +21,12 @@ int ida::search(std::deque<PuzzleState>& path, int g, int bound, std::vector<Vec
 
 	// Successors
 	for (auto& dir : solver::directions) {
-		if (not dirs.empty() && -dir == dirs.back())
+		if (!dirs.empty() && -dir == dirs.back())
 			continue;
 
 		PuzzleState simPuzzle = cur;
-		if (not simPuzzle.doMove(dir) 
-			or std::count_if(std::begin(path), std::end(path), 
+		if (!simPuzzle.doMove(dir)
+			|| std::count_if(std::begin(path), std::end(path), 
 				[&](const PuzzleState& s) { return simPuzzle.puzzle == s.puzzle; }) > 0) {
 			continue;
 		}
@@ -50,7 +46,6 @@ int ida::search(std::deque<PuzzleState>& path, int g, int bound, std::vector<Vec
 
 void ida::convertDirections(const std::vector<Vector2i>& dirs, std::string& result) {
 	for (auto& dir : dirs) {
-		// You 
 		if (dir == solver::UP)
 			result += 'U';
 		else if (dir == solver::DOWN)

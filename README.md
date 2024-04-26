@@ -1,22 +1,6 @@
 # 15-Puzzle
-An attempt of using my incomplete 2D engine to make a simple game, includes two solving implementations  
-An A* and an IDA* algorithm.
-
-## Building
-
-#### Dependencies
-- [CMake](https://www.cmake.org)
-- [VCPKG](https://github.com/microsoft/vcpkg)
-- [SDL2](http://www.libsdl.org)
-- [SDL2_image](https://www.libsdl.org/projects/SDL_image)
-- SDL2_ttf
-- Build Toolchain
-  - Linux
-       - make, clang
-       - [CodeBlocks](http://www.codeblocks.org)
-  - Windows
-       - [VisualStudio](http://aka.ms/vs) (msvc or clang)
-       - [CodeBlocks](http://www.codeblocks.org) (clang)
+An attempt of using my incomplete 2D engine to make a simple game,
+includes two solving implementations, an A* and an IDA* algorithm.
 
 ## Controls
 
@@ -37,7 +21,7 @@ You can use it with a renamed "patternDb_4.dat", it will resort to using Manhatt
 ### Generating Pattern Database
 You must include `src/puzzle/patternGen.hpp` in a file (can be main) and call `patternDb::threadedGen()`  
 If you changed the width of the puzzle you must create new groups for the new puzzle  
-Take for example the already existing pattern groups:  
+Take for instance the already existing pattern groups for a 4x4 board:  
 ```cpp
 // 555 - 5,765,760 iterations for each group of 5, smallest time and lowest memory usage (~2 GB)
 const vector<vector<int>>groups = { {1, 2, 3, 4, 7}, { 5,6,9,10,13 }, { 8,11,12,14,15 } };
@@ -48,3 +32,6 @@ const vector<vector<int>> groups = { {1, 5, 6, 9, 10, 13}, { 7,8,11,12,14,15 }, 
 // 78 - 4,151,347,200 iterations for group of 8, highest time and memory usage (?? GB)
 const vector<vector<int>> groups = { {1, 2, 3, 4, 5, 6, 7, 8}, { 9,10,11,12,13,14,15 } };
 ```
+
+## Building
+W.I.P

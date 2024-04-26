@@ -7,7 +7,7 @@
 #include <math.h>
 #include <SDL_thread.h>
 
-Engine::Engine()
+Engine::Engine() : frameCount()
 {
 	renderLock = SDL_CreateMutex();
 	canRender = SDL_CreateCond();

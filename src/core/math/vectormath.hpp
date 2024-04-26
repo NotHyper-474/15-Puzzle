@@ -11,7 +11,7 @@ struct SDL_FPoint;
 struct SDL_Point;
 
 struct Vector2f {
-	constexpr Vector2f() {}
+	Vector2f() {}
 	constexpr Vector2f(float x, float y) noexcept : x(x), y(y) {}
 	constexpr Vector2f(const Vector2f& other) : x(other.x), y(other.y) {}
 
