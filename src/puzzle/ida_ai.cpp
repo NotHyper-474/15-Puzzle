@@ -4,7 +4,9 @@
 
 int ida::search(std::deque<PuzzleState>& path, int g, int bound, std::vector<Vector2i>& dirs, float startingTime) {
 	if (Time::GetTime() - startingTime > 20.f) {
-		Logger::LogError("Time limit exceeded, algorithm might have been fed an unsolvable puzzle");
+		Logger::LogError(
+			"Time limit exceeded, algorithm might have been fed an unsolvable puzzle\n\
+If you're using Debug try using Release instead as it speeds up searching");
 		return INF;
 	}
 	PuzzleState cur = path.back();
@@ -26,8 +28,7 @@ int ida::search(std::deque<PuzzleState>& path, int g, int bound, std::vector<Vec
 
 		PuzzleState simPuzzle = cur;
 		if (!simPuzzle.doMove(dir)
-			|| std::count_if(std::begin(path), std::end(path), 
-				[&](const PuzzleState& s) { return simPuzzle.puzzle == s.puzzle; }) > 0) {
+			|| std::count(std::begin(path), std::end(path), simPuzzle) > 0) {
 			continue;
 		}
 

@@ -5,19 +5,11 @@
 #include "math/mathf.h"
 
 #include <math.h>
-#include <SDL_thread.h>
 
-Engine::Engine() : frameCount()
-{
-	renderLock = SDL_CreateMutex();
-	canRender = SDL_CreateCond();
-}
-
-Engine::~Engine()
-{
-	SDL_DestroyMutex(renderLock);
-	SDL_DestroyCond(canRender);
-}
+// If you're wondering why not place these in the header class
+// It's because Game is not defined yet
+Engine::Engine() = default;
+Engine::~Engine() = default;
 
 void Engine::Start(Game* game)
 {
@@ -34,13 +26,7 @@ void Engine::Start(Game* game)
 	}
 
 	this->game.reset(game);
-	SDL_Thread* renderThread = SDL_CreateThread(RenderLoopWrapper, "Render Loop", NULL);
-	if (renderThread == NULL)
-		Logger::LogErrorFormat("Could not create render thread: %s", SDL_GetError());
-
 	GameLoop();
-
-	SDL_WaitThread(renderThread, NULL);
 
 	this->game->isRunning = false;
 	this->game.reset();
@@ -66,8 +52,6 @@ void Engine::GameLoop()
 
 		game->HandleEvents();
 
-		SDL_mutexP(renderLock);
-
 		Time::deltaTime = Time::fixedDeltaTime; // Convenience
 		// Fixed Update accumulator
 		while (updateTimer > Time::fixedDeltaTime) {
@@ -78,13 +62,12 @@ void Engine::GameLoop()
 
 		game->PreUpdate();
 		game->Tick(Time::deltaTime);
-
 		game->GetManager()->Refresh();
 
-		SDL_CondSignal(canRender);
-		SDL_mutexV(renderLock);
-
-		SDL_Delay(0);
+		game->Render();
+		frameCount++;
+		Uint32 delay = maxFPS ? 1000u / maxFPS : 0u;
+		SDL_Delay(std::max(int(delay) - 1, 0));
 #if _DEBUG
 		if (deltaClock >= 1.f)
 		{
@@ -97,19 +80,4 @@ void Engine::GameLoop()
 		}
 #endif
 	}
-}
-
-int Engine::RenderLoop()
-{
-	while (game.get() != nullptr && game->Running())
-	{
-		SDL_mutexP(renderLock);
-		SDL_CondWait(canRender, renderLock);
-		game->Render();
-		frameCount++;
-		Uint32 delay = maxFPS ? 1000u / maxFPS : 0u;
-		SDL_Delay(std::max(int(delay) - 1, 0));
-		SDL_mutexV(renderLock);
-	}
-	return 0;
 }

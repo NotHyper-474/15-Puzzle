@@ -7,6 +7,8 @@
 #include "physics/collision.hpp"
 #include "physics/components/collider.h"
 
+#include <fmt/format.h>
+
 Game::~Game()
 {
 	IMG_Quit();
@@ -14,17 +16,13 @@ Game::~Game()
 }
 
 void Game::Create(const char* title, int width, int height, float scale, bool fullscreen, bool vsync, uint32_t windowFlags)
-{
-	// FIXME: Trying to set window size with OpenGL or DX11 crashes rendering
-	// This is a temporary workaround to that until I investigate further
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
-	
+{	
 	if (fullscreen)
 	{
 		windowFlags |= SDL_WINDOW_FULLSCREEN;
 	}
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_AUDIO) == 0)
 	{
 		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
 		TTF_Init();
@@ -54,9 +52,10 @@ void Game::Create(const char* title, int width, int height, float scale, bool fu
 	}
 	else
 	{
-		Logger::LogErrorFormat("Game failed initializing! Error: %s", SDL_GetError());
+		// FIXME: Logger isn't working with SDL_GetError
+		Logger::LogError(fmt::format("Game failed initializing! Error: {}", SDL_GetError()).c_str());
 		isRunning = false;
-		throw;
+		throw std::runtime_error("SDL failed initializing");
 	}
 
 	Start();

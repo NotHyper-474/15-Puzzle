@@ -3,23 +3,15 @@
 cmake_minimum_required (VERSION 3.5)
 
 
-project (15-Puzzle VERSION 0.1.0)
+project (15-Puzzle VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 # Definitions
 add_definitions(-c)
 
-if (UNIX AND NOT APPLE)
-	if (NOT CMAKE_C_COMPILER)
-		set(CMAKE_C_COMPILER "/usr/bin/clang")
-	endif()
-	if (NOT CMAKE_CXX_COMPILER)
-		set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-	endif()
-endif()
-
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	add_definitions(-Wextra -fdeclspec)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 else()
 	add_definitions(-W4)
 endif()
@@ -40,6 +32,7 @@ ENDIF()
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS serialization)
 
 include(cmake/IncludeAll.cmake) # doesn't actually include, just provides paths in a variable
@@ -58,6 +51,7 @@ target_link_libraries(15-Puzzle PRIVATE
 	SDL2_ttf::SDL2_ttf
 	Boost::boost
 	Boost::serialization
+	fmt::fmt
 )
 
 
