@@ -40,6 +40,8 @@ std::string solver::solvePuzzle(PuzzleState initialState) {
 		}
 	}
 
+	Logger::Log("Solving puzzle...");
+
 #if USE_ASTAR
 	std::priority_queue<MoveState> openSet;
 	std::unordered_set<std::array<int, 16>, CustomHasher> visited;

@@ -123,7 +123,7 @@ float Vector3f::Dot(const Vector3f& lhs, const Vector3f& rhs) {
 }
 
 float Vector3f::Distance(const Vector3f& lhs, const Vector3f& rhs) {
-	return std::sqrtf((lhs.x * lhs.x - rhs.x * rhs.x) + (lhs.y * lhs.y - rhs.y * rhs.y) + (lhs.z * lhs.z - rhs.z * rhs.z));
+	return sqrtf((lhs.x * lhs.x - rhs.x * rhs.x) + (lhs.y * lhs.y - rhs.y * rhs.y) + (lhs.z * lhs.z - rhs.z * rhs.z));
 }
 #pragma endregion
 

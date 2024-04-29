@@ -55,7 +55,9 @@ class Entity
 	ComponentBitSet componentBitSet;
 public:
 	std::string name;
+#if ALLOWS_PROPERTIES
 	__property(getTransform) Transform* const transform;
+#endif
 
 	Entity(const char* name, const Vector2f& position = Vector2f::zero());
 
@@ -145,8 +147,10 @@ protected:
 	virtual void Draw() {}
 
 public:
+#if ALLOWS_PROPERTIES
 	__property(getOwnerEntity) Entity* owner;
 	__property(getTransform) Transform* transform;
+#endif
 
 	virtual ~Component()
 	{

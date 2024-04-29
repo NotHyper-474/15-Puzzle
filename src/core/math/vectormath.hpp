@@ -2,8 +2,9 @@
 
 #include "core/common.h"
 
-#include <array>
 #include <algorithm>
+#include <array>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 
@@ -15,7 +16,7 @@ struct Vector2f {
 	constexpr Vector2f(float x, float y) noexcept : x(x), y(y) {}
 	constexpr Vector2f(const Vector2f& other) : x(other.x), y(other.y) {}
 
-	float Magnitude() const { return std::sqrtf(x * x + y * y); }
+	float Magnitude() const { return sqrtf(x * x + y * y); }
 	constexpr float SqrMagnitude() const { return x * x + y * y; }
 
 	void Normalize();
@@ -306,7 +307,7 @@ struct Vector2 : Vector<T, 2>
 
 	float Distance() const override
 	{
-		return std::sqrtf(this->values[0] * this->values[0] + this->values[1] * this->values[1]);
+		return sqrtf(this->values[0] * this->values[0] + this->values[1] * this->values[1]);
 	}
 
 	T SqrDistance() const override
@@ -314,15 +315,13 @@ struct Vector2 : Vector<T, 2>
 		return this->values[0] * this->values[0] + this->values[1] * this->values[1];
 	}
 
-	constexpr static std::size_t size() { return 2; }
-
 	constexpr T getX() const { return this->values[0]; }
 	constexpr T getY() const { return this->values[1]; }
 	constexpr void setX(const T _x) { this->values[0] = _x; }
 	constexpr void setY(const T _y) { this->values[1] = _y; }
 	void setValues(const T x, const T y) { this->values[0] = x; this->values[1] = y; }
 
-#ifndef __GNUC__
+#if ALLOWS_PROPERTIES
 	__property(getX, setX) T x;
 	__property(getY, setY) T y;
 #endif

@@ -3,6 +3,7 @@
 #include <deque>
 #include <vector>
 #include <string>
+#include <climits>
 
 #include "timing.h"
 #include "math/vectormath.hpp"

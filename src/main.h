@@ -1,7 +1,4 @@
-﻿// ZAMN Project.h: arquivo de inclusão para arquivos de inclusão padrão do sistema,
-// ou arquivos de inclusão específicos a um projeto.
-
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 
@@ -14,5 +11,4 @@
 #include "core/engine.h"
 #include "core/game.h"
 #include "core/inputManager.h"
-//#include "testGame.hpp"
 #include "puzzleGame.hpp"
