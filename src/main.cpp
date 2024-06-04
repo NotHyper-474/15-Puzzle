@@ -21,8 +21,8 @@ int main()
 	//regenerate_errBytes();
 	std::cout << "Hello World!" << endl;
 
-	PuzzleGame* puzzleGame = new PuzzleGame("Resources/puzzleimage.png");
-	game = (Game*)puzzleGame;
+	PuzzleGame puzzleGame("Resources/puzzleimage.png");
+	game = &puzzleGame;
 	game->Create("Picture Game", 300, 300, 1, false, false);
 	
 	InputManager::Initialize(*game);
