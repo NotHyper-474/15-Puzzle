@@ -1,145 +1,153 @@
 {
-  "version": 3,
-  "configurePresets": [
-    {
-      "name": "vcpkg-ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
-      },
-      "description": "Sets Ninja generator, build and install directory",
-      "displayName": "Ninja with VCPKG",
-      "generator": "Ninja",
-      "hidden": true,
-      "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    },
-    {
-      "name": "msvc-windows",
-      "hidden": true,
-      "inherits": "vcpkg-ninja",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl"
-      }
-    },
-    {
-      "name": "clang-windows",
-      "hidden": true,
-      "inherits": [
-        "msvc-windows"
-      ],
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "VCPKG_TARGET_TRIPLET": "x64-win-llvm"
-      }
-    },
-    {
-      "name": "clang-linux",
-      "hidden": true,
-      "inherits": [
-        "vcpkg-ninja"
-      ],
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
-      }
-    },
-    {
-      "name": "x64-clang-linux-debug",
-      "inherits": "clang-linux",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "x64-clang-linux-release",
-      "inherits": "clang-linux",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "x64-msvc-windows-debug",
-      "inherits": "msvc-windows",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "x64-msvc-windows-release",
-      "inherits": "msvc-windows",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "x64-clang-windows-debug",
-      "inherits": "clang-windows",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "x64-clang-windows-release",
-      "inherits": "clang-windows",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-        "VCPKG_TARGET_TRIPLET": "x64-win-llvm-release"
-      }
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "build-base",
-      "hidden": true,
-      "configurePreset": "x64-msvc-windows-debug"
-    },
-    {
-      "name": "debug",
-      "displayName": "MSVC Build (Debug)",
-      "inherits": "build-base"
-    },
-    {
-      "name": "release",
-      "displayName": "MSVC Build (Release)",
-      "inherits": "build-base",
-      "configurePreset": "x64-msvc-windows-release"
-    }
-  ]
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "vcpkg-ninja",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            },
+            "description": "Sets Ninja generator, build and install directory",
+            "displayName": "Ninja with VCPKG",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        {
+            "name": "msvc-windows",
+            "hidden": true,
+            "inherits": "vcpkg-ninja",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            }
+        },
+        {
+            "name": "clang-windows",
+            "hidden": true,
+            "inherits": [
+                "msvc-windows"
+            ],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "VCPKG_TARGET_TRIPLET": "x64-win-llvm"
+            }
+        },
+        {
+            "name": "clang-linux",
+            "hidden": true,
+            "inherits": "vcpkg-ninja",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+            }
+        },
+        {
+            "name": "x64-clang-linux-debug",
+            "inherits": "clang-linux",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "x64-clang-linux-release",
+            "inherits": "clang-linux",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "x64-msvc-windows-debug",
+            "inherits": "msvc-windows",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "x64-msvc-windows-release",
+            "inherits": "msvc-windows",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "x64-clang-windows-debug",
+            "inherits": "clang-windows",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "x64-clang-windows-release",
+            "inherits": "clang-windows",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "VCPKG_TARGET_TRIPLET": "x64-win-llvm-release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-base",
+            "hidden": true,
+            "configurePreset": "x64-msvc-windows-debug"
+        },
+        {
+            "name": "debug",
+            "displayName": "MSVC Build (Debug)",
+            "inherits": "build-base"
+        },
+        {
+            "name": "release",
+            "displayName": "MSVC Build (Release)",
+            "inherits": "build-base",
+            "configurePreset": "x64-msvc-windows-release"
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Clang Build (Debug, Windows)",
+            "configurePreset": "x64-clang-windows-debug"
+        },
+        {
+            "name": "clang-release",
+            "displayName": "Clang Build (Release, Windows)",
+            "configurePreset": "x64-clang-windows-release"
+        }
+    ]
 }
