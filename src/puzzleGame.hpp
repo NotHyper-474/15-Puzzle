@@ -15,7 +15,7 @@
 constexpr int SECONDS_PER_HOUR = 3600;
 constexpr int SECONDS_PER_MINUTE = 60;
 
-class PuzzleGame : Game
+class PuzzleGame : public Game
 {
 	enum GameState : char {
 		GAME_RUNNING,
@@ -69,7 +69,7 @@ protected:
 
 		scale = sizeToFit / std::fminf(w, h);
 
-		window->SetSize(w * scale, h * scale);
+		window->SetSize(Mathf::RoundToInt(w * scale), Mathf::RoundToInt(h * scale));
 
 		LoopBoard([&](int i)
 			{
@@ -80,7 +80,8 @@ protected:
 		Scramble();
 		emptyTile = FindEmptyIndex();
 
-		Entity* cam = &GetManager()->AddEntity("Camera");
+		// This camera is only used to silence the DrawSorter, which depends on one
+		Entity* cam = &GetManager()->AddEntity("Main Camera");
 		cam->transform->setPosition(window->GetSize() * 0.5f);
 		cam->AddComponent<Camera>();
 	}
@@ -100,8 +101,8 @@ protected:
 
 				std::array<int, 16> copy{};
 				std::copy(board.begin(), board.end(), copy.begin());
-				PuzzleState inicial{ copy, (int)emptyTile };
-				steps = solver::solvePuzzle(inicial);
+				PuzzleState initial{ copy, (int)emptyTile };
+				steps = solver::solvePuzzle(initial);
 			}
 			else {
 				const char& c = steps.front();
@@ -109,22 +110,14 @@ protected:
 				Vector2zu newPos = blankPos;
 				int newIndex = -1;
 
-				if (c == 'U' && blankPos.y > 0) {
-					newPos.y -= 1;
-				}
-				else if (c == 'D' && blankPos.y < boardSize - 1) {
-					newPos.y += 1;
-				}
-				else if (c == 'L' && blankPos.x > 0) {
-					newPos.x -= 1;
-				}
-				else if (c == 'R' && blankPos.x < boardSize - 1) {
-					newPos.x += 1;
-				}
-				else {
+				if (c == 'U' && blankPos.y > 0) newPos.y -= 1;
+				else if (c == 'D' && blankPos.y < boardSize - 1) newPos.y += 1;
+				else if (c == 'L' && blankPos.x > 0) newPos.x -= 1;
+				else if (c == 'R' && blankPos.x < boardSize - 1) newPos.x += 1;
+				else
 					Logger::LogWarning("Invalid movement attempted, ignoring.");
-				}
-				newIndex = FlatIndex(newPos);
+					
+				newIndex = (int)FlatIndex(newPos);
 
 				steps.erase(steps.begin());
 
@@ -219,7 +212,7 @@ protected:
 		int row = 0;
 		int blankRow = 0;
 
-		for (int i = 0; i < board.size(); i++)
+		for (size_t i = 0; i < board.size(); i++)
 		{
 			if (i % boardSize == 0) { // advance to next row
 				row++;
@@ -228,7 +221,7 @@ protected:
 				blankRow = row; // save the row on which encountered
 				continue;
 			}
-			for (int j = i + 1; j < board.size(); j++)
+			for (size_t j = i + 1; j < board.size(); j++)
 			{
 				if (board[i] > board[j] && board[j] != 0)
 				{
@@ -251,7 +244,7 @@ protected:
 	}
 
 	bool CheckIfSolved() {
-		for (int i = 0; i < board.size(); i++) {
+		for (size_t i = 0; i < board.size(); i++) {
 			if (board[i] != i + 1 && board[i] != 0)
 			{
 				return false;
@@ -265,7 +258,7 @@ protected:
 
 	bool IsValidMove(const Vector2zu& position) const
 	{
-		Vector2<size_t> emptyPos = To2DIndex(emptyTile);
+		const Vector2zu emptyPos = To2DIndex(emptyTile);
 
 		if (position.x == emptyPos.x || position.y == emptyPos.y) {
 			return true;

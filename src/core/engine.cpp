@@ -19,17 +19,17 @@ void Engine::Start(Game* game)
 		return;
 	}
 
-	if (this->game && this->game->Running())
+	if (currentGame != nullptr && currentGame->Running())
 	{
 		Logger::LogError("Attempted to start engine with other game instance when current one is still running, operation not allowed.");
 		return;
 	}
 
-	this->game.reset(game);
+	currentGame = game;
+
 	GameLoop();
 
-	this->game->isRunning = false;
-	this->game.reset();
+	currentGame->isRunning = false;
 }
 
 void Engine::GameLoop()
@@ -37,10 +37,13 @@ void Engine::GameLoop()
 	double lastTime = Time::GetTimeAsDouble();
 	double updateTimer = 0.;
 	float deltaClock = 0.f;
+	
+	#if _DEBUG
 	int framerate = 60;
 	double averageFrameTimeMs = (1.0 / 60.0) * 1000.0;
+	#endif
 
-	while (game->Running())
+	while (currentGame->Running())
 	{
 		double currentTime = Time::GetTimeAsDouble();
 		double passedTime = (currentTime - lastTime) * Time::timeScale;
@@ -50,21 +53,21 @@ void Engine::GameLoop()
 		updateTimer += passedTime;
 		deltaClock += passedTime;
 
-		game->HandleEvents();
+		currentGame->HandleEvents();
 
 		Time::deltaTime = Time::fixedDeltaTime; // Convenience
 		// Fixed Update accumulator
 		while (updateTimer > Time::fixedDeltaTime) {
-			game->FixedTick(Time::fixedDeltaTime);
+			currentGame->FixedTick(Time::fixedDeltaTime);
 			updateTimer -= Time::fixedDeltaTime;
 		}
 		Time::deltaTime = fminf(float(passedTime), Time::maximumDeltaTime);
 
-		game->PreUpdate();
-		game->Tick(Time::deltaTime);
-		game->GetManager()->Refresh();
+		currentGame->PreUpdate();
+		currentGame->Tick(Time::deltaTime);
+		currentGame->GetManager()->Refresh();
 
-		game->Render();
+		currentGame->Render();
 		frameCount++;
 		Uint32 delay = maxFPS ? 1000u / maxFPS : 0u;
 		SDL_Delay(std::max(int(delay) - 1, 0));

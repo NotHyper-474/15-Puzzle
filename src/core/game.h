@@ -10,7 +10,7 @@
 
 struct Collider;
 
-class Game
+struct Game
 {
 	friend class Engine;
 
@@ -30,63 +30,23 @@ public:
 	FORCEINLINE Entity& Instantiate(const char* name, const Vector2f& position = Vector2f()) const;
 
 	template<typename T> requires std::is_base_of<Component, T>::value
-	T* FindEntityOfType() const
-	{
-		auto it = std::find_if(ecsManager.entities.begin(), ecsManager.entities.end(), [](const std::unique_ptr<Entity>& e) { return e->HasComponent<T>(); });
-
-		if (it != ecsManager.entities.end())
-		{
-			return (*it->get()).template GetComponent<T>();
-		}
-
-		return nullptr;
-	}
+	T* FindEntityOfType() const;
 
 	template<typename T> requires std::derived_from<T, Component>
-	std::vector<T*> FindEntitiesOfType() const
-	{
-		std::vector<T*> result;
-		for (auto& ent : ecsManager.entities)
-		{
-			T* c = nullptr;
-			if (ent->TryGetComponent<T>(&c))
-				result.push_back(c);
-		}
-		return result;
-	}
-
+	std::vector<T*> FindEntitiesOfType() const;
+	
 	template<typename T, size_t L> requires std::derived_from<T, Component>
-	int FindEntitiesOfTypeNonAlloc(std::array<T*, L>& result)
-	{
-		size_t i = 0;
-		for (auto& ent : ecsManager.entities)
-		{
-			T* c = nullptr;
-			if (ent->TryGetComponent<T>(&c))
-			{
-				result[++i] = c;
-				if (i == L) break;
-			}
-		}
-		return i;
-	}
+	int FindEntitiesOfTypeNonAlloc(std::array<T*, L>& result);
 
-	// @return First entity with specified name, might return nullptr if not found
-	Entity* FindWithName(const char* name)
-	{
-		for (auto& ent : ecsManager.entities) {
-			if (ent->name == name)
-				return ent.get();
-		}
-		return nullptr;
-	}
+	// @return First entity with specified name, will return nullptr if not found
+	Entity* FindWithName(const char* name);
 
 	bool Running() const;
 	FORCEINLINE static Window* GetWindow() { return Engine::getGame()->window.get(); }
 	FORCEINLINE static DrawSorter* GetSorter() { return Engine::getGame()->window->GetSorter(); }
 	Input* GetInput() { return &input; }
 
-	FORCEINLINE Manager* GetManager() { return &ecsManager; }
+	FORCEINLINE EntityManager* GetManager() { return &ecsManager; }
 
 protected:
 	virtual void Start() {}
@@ -98,7 +58,9 @@ protected:
 	std::unique_ptr<Window> window;
 	Input input;
 
-	Manager ecsManager;
+	EntityManager ecsManager;
 	std::array<Collider*, 32> colliders;
 
 };
+
+#include "game.inl"

@@ -39,7 +39,7 @@ void Entity::Draw()
 #pragma endregion
 
 #pragma region ECSManager
-void Manager::PreUpdate()
+void EntityManager::PreUpdate()
 {
 	for (size_t i = 0; i < pendingEntities.size(); i++)
 	{
@@ -53,19 +53,19 @@ void Manager::PreUpdate()
 	}
 }
 
-void Manager::Update(const float _deltaTime)
+void EntityManager::Update(const float _deltaTime)
 {
 	for (auto& e : entities)
 		if (e->m_transform->parent == nullptr && e->IsSelfActive()) e->Update(_deltaTime);
 }
 
-void Manager::FixedUpdate(const float _fixedDeltaTime)
+void EntityManager::FixedUpdate(const float _fixedDeltaTime)
 {
 	for (auto& e : entities)
 		if (e->m_transform->parent == nullptr && e->IsSelfActive()) e->FixedUpdate(_fixedDeltaTime);
 }
 
-void Manager::Draw()
+void EntityManager::Draw()
 {
 	for (auto& e : entities)
 		if (e->m_transform->parent == nullptr && e->IsSelfActive())
@@ -75,7 +75,7 @@ void Manager::Draw()
 /// <summary>
 /// Removes inactive entities
 /// </summary>
-void Manager::Refresh()
+void EntityManager::Refresh()
 {
 	entities.erase(std::remove_if(std::begin(entities), std::end(entities),
 		[](const std::unique_ptr<Entity>& mEntity)
@@ -84,7 +84,7 @@ void Manager::Refresh()
 		}), std::end(entities));
 }
 
-void Manager::RemoveChild(Transform* child)
+void EntityManager::RemoveChild(Transform* child)
 {
 	entities.erase(std::remove_if(std::begin(entities), std::end(entities),
 		[child](const std::unique_ptr<Entity>& e)

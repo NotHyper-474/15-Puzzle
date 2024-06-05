@@ -3,8 +3,6 @@
 
 using namespace std;
 
-static Game* game = nullptr;
-
 // TODO: Obsolete
 void set_pixel(SDL_Surface* surface, int x, int y, Uint8 pixel)
 {
@@ -19,14 +17,13 @@ int main()
 
 	// Uncomment only if you want to change the error texture
 	//regenerate_errBytes();
-	std::cout << "Hello World!" << endl;
+	std::cout << "Hello World!" << std::endl;
 
 	PuzzleGame puzzleGame("Resources/puzzleimage.png");
-	game = &puzzleGame;
-	game->Create("Picture Game", 300, 300, 1, false, false);
+	puzzleGame.Create("Picture Game", 300, 300, 1, false, false);
 	
-	InputManager::Initialize(*game);
-	Engine::getInstance()->Start(game);
+	InputManager::Initialize(puzzleGame);
+	Engine::getInstance()->Start(&puzzleGame);
 
 	std::cout << "Closing...\nGoodbye World!" << std::endl;
 

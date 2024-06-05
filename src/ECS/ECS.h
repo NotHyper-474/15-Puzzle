@@ -39,13 +39,16 @@ constexpr std::size_t maxComponents = 32U;
 using ComponentBitSet = std::bitset<maxComponents>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
+template<typename T>
+concept InheritsComponent = std::derived_from<T, Component>;
+
 /// <summary>
 /// Entity is the main object used during a level
 /// </summary>
 class Entity
 {
 	friend class Component;
-	friend class Manager;
+	friend class EntityManager;
 	bool destroyed = false;
 	bool active = true;
 	std::vector<std::unique_ptr<Component>> components;
@@ -74,19 +77,19 @@ public:
 	bool IsSelfActive() const { return active; }
 	void Destroy() { destroyed = true; }
 
-	template<typename T> requires std::derived_from<T, Component>
+	template<typename T> requires InheritsComponent<T>
 	bool HasComponent() const
 	{
 		return componentBitSet.test(GetComponentTypeID<T>());
 	}
 
-	template<typename T, typename... TArgs> requires std::derived_from<T, Component>
+	template<typename T, typename... TArgs> requires InheritsComponent<T>
 	T& AddComponent(TArgs&&... args)
 	{
 		return AddComponent(new T(std::forward<TArgs>(args)...));
 	}
 
-	template <typename T> requires std::derived_from<T, Component>
+	template <typename T> requires InheritsComponent<T>
 	T& AddComponent(T* instance)
 	{
 		if (instance == nullptr)
@@ -125,7 +128,12 @@ public:
 		if (!result)
 			return false;
 
-		return (*result = GetComponent<T>()) != nullptr;
+		T* component = GetComponent<T>();
+		if (component == nullptr)
+			return false;
+
+		*result = component;
+		return true;
 	}
 
 protected:
@@ -136,7 +144,7 @@ protected:
 class Component
 {
 	friend class Entity;
-	friend class Manager;
+	friend class EntityManager;
 	Entity* m_owner;
 	Transform* m_transform;
 
@@ -169,13 +177,13 @@ public:
 	}
 
 	template <typename T>
-	FORCEINLINE bool HasComponent() const requires std::derived_from<T, Component>
+	FORCEINLINE bool HasComponent() const
 	{
 		return m_owner->HasComponent<T>();
 	}
 
-	template <typename T>
-	FORCEINLINE T* GetComponent() const requires std::derived_from<T, Component>
+	template <typename T> 
+	FORCEINLINE T* GetComponent() const
 	{
 		return m_owner->GetComponent<T>();
 	}
@@ -186,7 +194,7 @@ public:
 // Give definition after or else other scripts will also treat it as incomplete
 #include "../core/transform.h"
 
-class Manager
+class EntityManager
 {
 	friend class Game;
 

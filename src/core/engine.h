@@ -12,7 +12,7 @@ class Engine
 	Engine();
 	~Engine();
 
-	std::unique_ptr<Game> game;
+	Game* currentGame;
 
 	size_t frameCount;
 	void GameLoop();
@@ -29,9 +29,9 @@ public:
 		return &engine;
 	}
 
-	static Game* getGame()
+	static const Game* getGame()
 	{
-		return getInstance()->game.get();
+		return getInstance()->currentGame;
 	}
 	
 	// PUBLIC VARS

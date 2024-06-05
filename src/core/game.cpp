@@ -7,8 +7,6 @@
 #include "physics/collision.hpp"
 #include "physics/components/collider.h"
 
-#include <fmt/format.h>
-
 Game::~Game()
 {
 	IMG_Quit();
@@ -22,7 +20,7 @@ void Game::Create(const char* title, int width, int height, float scale, bool fu
 		windowFlags |= SDL_WINDOW_FULLSCREEN;
 	}
 
-	if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_AUDIO) == 0)
+	if (SDL_Init(SDL_INIT_VIDEO) == 0)
 	{
 		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
 		TTF_Init();
@@ -52,8 +50,7 @@ void Game::Create(const char* title, int width, int height, float scale, bool fu
 	}
 	else
 	{
-		// FIXME: Logger isn't working with SDL_GetError
-		Logger::LogError(fmt::format("Game failed initializing! Error: {}", SDL_GetError()).c_str());
+		Logger::LogErrorFormat("Game failed initializing! Error: %s", SDL_GetError());
 		isRunning = false;
 		throw std::runtime_error("SDL failed initializing");
 	}
@@ -63,6 +60,8 @@ void Game::Create(const char* title, int width, int height, float scale, bool fu
 	colliders.fill(nullptr);
 	FindEntitiesOfTypeNonAlloc(colliders);
 }
+
+#pragma region Game Loop
 
 void Game::HandleEvents()
 {
@@ -173,15 +172,23 @@ void Game::Render()
 	SDL_RenderPresent(renderer);
 }
 
+bool Game::Running() const
+{
+	return isRunning;
+}
+#pragma endregion
+
+Entity* Game::FindWithName(const char* name)
+{
+	for (auto& ent : ecsManager.entities) {
+		if (ent->name == name)
+			return ent.get();
+	}
+	return nullptr;
+}
+
 Entity& Game::Instantiate(Entity* instance, const Vector2f& position)
 {
 	instance->transform->position = position;
 	return ecsManager.AddEntity(instance);
-}
-
-
-
-bool Game::Running() const
-{
-	return isRunning;
 }

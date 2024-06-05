@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef clang
-
 #include <cmath>
 #include <fstream>
 #include <future>
@@ -69,7 +67,7 @@ namespace patternDb {
 	}
 
 	countMap generateDb(int boardSize, const vector<int>& group, int groupNum) {
-		const int boardLen = pow(boardSize, 2);
+		const int boardLen = boardSize*boardSize;
 
 		PuzzleState puzzle;
 		puzzle.g = 0;
@@ -196,5 +194,3 @@ namespace patternDb {
 		patternDbFile.close();
 	}
 }
-
-#endif

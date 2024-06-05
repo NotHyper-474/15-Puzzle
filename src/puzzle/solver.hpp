@@ -11,6 +11,12 @@
 #include <unordered_set>
 #include <vector>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
+
 #include "core/math/vectormath.hpp"
 #include "countMap.h"
 #include "puzzleState.hpp"
@@ -23,7 +29,7 @@ namespace solver {
 	constexpr Vector2i LEFT { -1,  0 };
 	constexpr Vector2i RIGHT{  1,  0 };
 
-	constexpr Vector2i directions[4] = { UP, DOWN, LEFT, RIGHT };
+	constexpr Vector2i directions[] = { UP, DOWN, LEFT, RIGHT };
 
 	const std::string patternFilePath = "Resources/patternDb_" + std::to_string(puzzleSize) + ".dat";
 
@@ -34,6 +40,37 @@ namespace solver {
 		static PatternDB& getInstance() {
 			static PatternDB inst;
 			return inst;
+		}
+
+		/// <summary>
+		/// Loads Pattern database from file
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns>0 when an error occurs or 1 if succeded</returns>
+		int LoadFromFile(const char* fileName) {
+			Logger::Log("Loading patterns, hang tight...");
+			std::ifstream patternFile(fileName);
+			if (patternFile.is_open() == false) {
+				Logger::LogError("Pattern file not found. Make sure it's in the same directory as the executable");
+				return 0;
+			}
+
+			boost::archive::text_iarchive data(patternFile);
+
+			data >> groups;
+			data >> maps;
+
+			if (groups.size() != maps.size()) {
+				Logger::LogError("Groups and maps count doesn't match. Was the pattern file generated correctly?");
+				return 0;
+			}
+
+			Logger::Log("Pattern Data loaded successfully");
+			for (size_t i = 0; i < groups.size(); i++) {
+				Logger::LogFormat("Group %d, permutations: %d", i, maps[i].size());
+			}
+
+			return 1;
 		}
 
 		std::vector<std::vector<int>> groups;

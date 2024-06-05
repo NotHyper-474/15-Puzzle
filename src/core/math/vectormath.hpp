@@ -177,43 +177,13 @@ struct Vector3f {
 	float x, y, z;
 };
 
-struct Vector4f
-{
-	static float Dot(const Vector4f& lhs, const Vector4f& rhs)
-	{
-		return lhs.x * rhs.y + lhs.x * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
-	}
-
-	float operator[](const size_t i) const
-	{
-		if (i >= 4) {
-			std::cerr << "\x1B[31mIndex out of range: " << i << ". Limit is 3\33[0m\t" << std::endl;
-			throw;
-		}
-		return *(&x + i);
-	}
-
-	float& operator[](const size_t i)
-	{
-		if (i >= 4) {
-			std::cerr << "\x1B[31mIndex out of range: " << i << ". Limit is 3\33[0m\t" << std::endl;
-			throw std::out_of_range("");
-		}
-
-		return *(&x + i);
-	}
-
-	float x, y, z, w;
-};
-
 template<class T, size_t L> requires std::is_arithmetic<T>::value
 struct Vector
 {
-	constexpr Vector(std::same_as<T> auto ... init) : values { init... }
-	{
-		// Can't use requires (sizeof...(init) == L) for some reason
-		// So we have to trust the programmer to be using the same amount of values
-	}
+	template <typename... Args>
+    requires (sizeof...(Args) == L) && (std::is_convertible_v<Args, T> && ...)
+    constexpr Vector(Args&&... init) : values{ static_cast<T>(std::forward<Args>(init))... } {
+    }
 
 	Vector() {}
 
@@ -240,12 +210,12 @@ struct Vector
 	}
 
 #pragma region Methods
-	virtual float Distance() const
+	virtual float Magnitude() const
 	{
 		T sum = 0;
 		for (size_t i = 0; i < L; ++i)
 			sum += values[i] * values[i];
-		return sqrt(sum);
+		return sqrtf((float)sum);
 	}
 
 	virtual T SqrDistance() const
@@ -305,9 +275,9 @@ struct Vector2 : Vector<T, 2>
 		return Vector2<_Other>((_Other)getX(), (_Other)getY());
 	}
 
-	float Distance() const override
+	float Magnitude() const override
 	{
-		return sqrtf(this->values[0] * this->values[0] + this->values[1] * this->values[1]);
+		return sqrtf(float(this->values[0] * this->values[0] + this->values[1] * this->values[1]));
 	}
 
 	T SqrDistance() const override

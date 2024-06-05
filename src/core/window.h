@@ -28,15 +28,14 @@ struct Window
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
 
-		// Should be done here or crash happens
-		// The crash happens because the font closing in DrawSorter occurs after the TTF_Quit call
-		// TODO: This should not happen
+		// FIXME: Should be done here or crash happens
+		// The crash happens because the font closing in DrawSorter occurs only after the TTF_Quit call
 		TTF_Quit();
 	}
 
 	void HandleEvents(const SDL_Event* event);
 
-	void SetSize(unsigned newWidth, unsigned newHeight)
+	void SetSize(Uint16 newWidth, Uint16 newHeight)
 	{
 		SDL_assert(newWidth != 0 && newHeight != 0);
 		width = newWidth, height = newHeight;
