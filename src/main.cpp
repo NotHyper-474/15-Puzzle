@@ -3,14 +3,6 @@
 
 using namespace std;
 
-// TODO: Obsolete
-void set_pixel(SDL_Surface* surface, int x, int y, Uint8 pixel)
-{
-	Uint8* target_pixel = (Uint8*)surface->pixels + y * surface->pitch +
-		x * sizeof * target_pixel;
-	*target_pixel = pixel;
-}
-
 int main()
 {
 	const int result = std::atexit(SDL_Quit);
