@@ -189,6 +189,6 @@ Entity* Game::FindWithName(const char* name)
 
 Entity& Game::Instantiate(Entity* instance, const Vector2f& position)
 {
-	instance->transform->position = position;
+	instance->getTransform()->setPosition(position);
 	return ecsManager.AddEntity(instance);
 }
