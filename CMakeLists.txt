@@ -1,6 +1,6 @@
 ﻿###################################################
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.5...3.10)
 
 
 project (15-Puzzle VERSION 0.1.0 LANGUAGES C CXX)
@@ -51,8 +51,8 @@ target_include_directories(15-Puzzle PRIVATE
 
 target_link_libraries(15-Puzzle PRIVATE
 	${SDL2_LIBRARIES}
-	SDL2_image::SDL2_image
-	SDL2_ttf::SDL2_ttf
+	$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+	$<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
 	Boost::boost
 	Boost::serialization
 	fmt::fmt-header-only
