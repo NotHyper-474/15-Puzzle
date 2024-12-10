@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../core/common.h"
-#include "../core/logger.hpp"
+#include "common.h"
+#include "logger.hpp"
 #include "../core/math/vectormath.hpp"
 #include <SDL.h>
 
