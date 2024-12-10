@@ -55,99 +55,77 @@
             }
         },
         {
-            "name": "x64-clang-linux-debug",
+            "name": "x64-clang-linux",
             "inherits": "clang-linux",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "x64-clang-linux-release",
-            "inherits": "clang-linux",
-            "architecture": {
-                "value": "x64",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },
-        {
-            "name": "x64-msvc-windows-debug",
+            "name": "x64-msvc-windows",
             "inherits": "msvc-windows",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "x64-msvc-windows-release",
-            "inherits": "msvc-windows",
-            "architecture": {
-                "value": "x64",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },
-        {
-            "name": "x64-clang-windows-debug",
+            "name": "x64-clang-windows",
             "inherits": "clang-windows",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "x64-clang-windows-release",
-            "inherits": "clang-windows",
-            "architecture": {
-                "value": "x64",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "VCPKG_TARGET_TRIPLET": "x64-win-llvm-release"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "build-base",
+            "name": "build-msvc",
             "hidden": true,
-            "configurePreset": "x64-msvc-windows-debug"
+            "configurePreset": "x64-msvc-windows"
+        },
+        {
+            "name": "build-clang",
+            "hidden": true,
+            "configurePreset": "x64-clang-windows"
         },
         {
             "name": "debug",
             "displayName": "MSVC Build (Debug)",
-            "inherits": "build-base"
+            "inherits": "build-msvc",
+            "configuration": "Debug"
         },
         {
             "name": "release",
             "displayName": "MSVC Build (Release)",
-            "inherits": "build-base",
-            "configurePreset": "x64-msvc-windows-release"
+            "inherits": "build-msvc",
+            "configuration": "Release"
         },
         {
             "name": "clang-debug",
             "displayName": "Clang Build (Debug, Windows)",
-            "configurePreset": "x64-clang-windows-debug"
+            "inherits": "build-clang",
+            "configuration": "Debug"
         },
         {
             "name": "clang-release",
             "displayName": "Clang Build (Release, Windows)",
-            "configurePreset": "x64-clang-windows-release"
+            "inherits": "build-clang",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-linux-debug",
+            "displayName": "Clang Build (Debug, Linux)",
+            "inherits": "build-clang",
+            "configurePreset": "x64-clang-linux",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-linux-release",
+            "displayName": "Clang Build (Release, Linux)",
+            "configurePreset": "x64-clang-linux",
+            "configuration": "Release"
         }
     ]
 }

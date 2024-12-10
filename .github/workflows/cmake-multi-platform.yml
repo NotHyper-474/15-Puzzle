@@ -30,16 +30,17 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            configurePreset: x64-msvc-windows-release
-            buildPreset: clang-release
+            configurePreset: x64-msvc-windows
+            buildPreset: release
           - os: windows-latest
             c_compiler: clang
-            configurePreset: x64-clang-windows-release
+            configurePreset: x64-clang-windows
+            buildPreset: clang-release
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            configurePreset: x64-clang-linux-release
-            buildPreset: 
+            configurePreset: x64-clang-linux
+            buildPreset: clang-linux-release
         exclude:
           - os: windows-latest
             c_compiler: gcc
