@@ -52,7 +52,7 @@ struct Window
 	FORCEINLINE DrawSorter* GetSorter() { return drawSorter.get(); }
 	constexpr FORCEINLINE int GetWidth() const { return width; }
 	constexpr FORCEINLINE int GetHeight() const { return height; }
-	FORCEINLINE Vector2<uint16_t> GetSize() const { return { width, height }; }
+	FORCEINLINE Vector2<Uint16> GetSize() const { return { width, height }; }
 	FORCEINLINE Vector2f GetScaledSize() const { return Vector2f(width * scale, height * scale); }
 	FORCEINLINE float GetScaledWidth() const { return width * scale; }
 	FORCEINLINE float GetScaledHeight() const { return height * scale; }

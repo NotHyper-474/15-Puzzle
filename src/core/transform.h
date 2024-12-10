@@ -17,10 +17,12 @@ public:
 	// TODO: Probably add rotation
 	Vector2f localPosition;
 	Vector2f localScale;
+	#if ALLOWS_PROPERTIES
 	__property(getPosition, setPosition) Vector2f position;
 	__property(getLossyScale) Vector2f lossyScale;
 	__property(getParent, setParent) Transform* parent;
 	__property(getRoot) Transform* root;
+	#endif
 
 	void Start() override
 	{
@@ -59,14 +61,14 @@ public:
 	{
 		if (m_parent == nullptr)
 			return localScale;
-		return m_parent->lossyScale.Scale(localScale);
+		return m_parent->getLossyScale().Scale(localScale);
 	}
 
 	FORCEINLINE void setParent(Transform* parent, bool worldPositionStays = false)
 	{
 		if (parent == nullptr && m_parent == nullptr) return;
 		if (worldPositionStays)
-			localPosition = position;
+			localPosition = getPosition();
 
 		if (parent == nullptr)
 			m_parent->children.erase(std::find(m_parent->children.begin(), m_parent->children.end(), this));
@@ -76,13 +78,13 @@ public:
 
 	FORCEINLINE Transform* getRoot()
 	{
-		if (parent == nullptr) return this;
+		if (getParent() == nullptr) return this;
 		Transform* current = this;
 		Transform* prev = nullptr;
 		while (current != nullptr)
 		{
 			prev = current;
-			current = prev->parent;
+			current = prev->getParent();
 		}
 		return prev;
 	}
@@ -120,7 +122,7 @@ private:
 			globalPosition = localPosition;
 		}
 		else {
-			globalPosition = m_parent->getPosition() + Vector2f::Scale(localPosition, lossyScale);
+			globalPosition = m_parent->getPosition() + Vector2f::Scale(localPosition, getLossyScale());
 		}
 
 		hasChanged = false;
