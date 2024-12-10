@@ -30,11 +30,16 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            configurePreset: x64-msvc-windows-release
+            buildPreset: clang-release
           - os: windows-latest
             c_compiler: clang
+            configurePreset: x64-clang-windows-release
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            configurePreset: x64-clang-linux-release
+            buildPreset: 
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -64,7 +69,14 @@ jobs:
     - name: Run CMake+vcpkg+Ninja+CTest to build packages and generate/build/test the code.
       uses: lukka/run-cmake@v10
       with:
-        configurePreset: 'x64-msvc-windows-release'
-        buildPreset: 'release'
-        #testPreset: 'test-release'
+        configurePreset: ${{ matrix.configurePreset }}
+        buildPreset: ${{ matrix.buildPreset }}
+        buildPresetAdditionalArgs: "['--target all']"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4.4.3
+      with:
+          name: ${{ matrix.os }}
+          path: out/build/${{ matrix.configurePreset }}
+          if-no-files-found: warn
             
