@@ -3,7 +3,14 @@
   "name": "15-puzzle",
   "version": "0.1.0",
   "dependencies": [
-    "sdl2",
+    {
+      "name": "sdl2",
+      "platform": "linux",
+      "features": [
+        "x11",
+        "wayland"
+      ]
+    },
     "sdl2-image",
     "sdl2-ttf",
     "boost-serialization",
