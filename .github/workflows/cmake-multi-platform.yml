@@ -77,7 +77,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4.4.3
       with:
-          name: ${{ matrix.os }}
+          name: ${{ matrix.os }}-${{ matrix.c_compiler }}
           path: out/build/${{ matrix.configurePreset }}
           if-no-files-found: warn
             
